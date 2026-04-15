@@ -1,6 +1,6 @@
 /* =========================================
-   NAGOYA TRIP - JavaScript
-   古城新韻・名古屋
+   BUSAN TRIP - JavaScript
+   秋天釜山・暖秋海洋色調
    ========================================= */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -67,18 +67,18 @@ document.addEventListener('DOMContentLoaded', () => {
     fadeEls.forEach(el => el.classList.add('visible'));
   }
 
-  /* ---- Spots Navigation (spots.html) ---- */
-  const spotsNavBtns = document.querySelectorAll('.spots-nav__btn');
-  const spotSections = document.querySelectorAll('.spot-section');
+  /* ---- Page Navigation (spots.html / food.html) ---- */
+  const pageNavBtns = document.querySelectorAll('.page-nav__btn');
+  const pageSections = document.querySelectorAll('.page-section');
 
-  if (spotsNavBtns.length > 0) {
-    spotsNavBtns.forEach(btn => {
+  if (pageNavBtns.length > 0) {
+    pageNavBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         const targetId = btn.getAttribute('data-target');
         if (!targetId) return;
 
         // Update active nav
-        spotsNavBtns.forEach(b => b.classList.remove('active'));
+        pageNavBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
         // Scroll to section
@@ -96,13 +96,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const scrollY = window.scrollY + 200;
       let currentId = '';
 
-      spotSections.forEach(section => {
+      pageSections.forEach(section => {
         if (section.offsetTop <= scrollY) {
           currentId = section.getAttribute('id');
         }
       });
 
-      spotsNavBtns.forEach(btn => {
+      pageNavBtns.forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-target') === currentId);
       });
     }, { passive: true });
