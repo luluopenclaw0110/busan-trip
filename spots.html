@@ -3,376 +3,789 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>景點推薦｜秋日釜山深度之旅</title>
-  <meta name="description" content="精選釜山18個必訪景點，包括甘川文化村、海雲台海水浴場、松島海上纜車、梵魚寺、釜山塔等，帶你深度探索釜山。">
+  <title>景點探索 | 釜山Trip — 秋天釜山旅遊指南</title>
+  <meta name="description" content="秋天釜山 18 個值得走訪的地方。從甘川文化村到影島大橋，探索釜山最經典的景點。">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    /* ---- Filter Bar ---- */
+    .filter-bar {
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+      position: sticky;
+      top: 68px;
+      z-index: 100;
+    }
+
+    .filter-bar__inner {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .filter-bar__inner::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-btn {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 8px 18px;
+      border-radius: 100px;
+      border: 1.5px solid transparent;
+      background: transparent;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .filter-btn:hover {
+      color: var(--secondary);
+      background: rgba(224, 123, 57, 0.06);
+    }
+
+    .filter-btn.active {
+      background: var(--secondary);
+      color: var(--text-light);
+      border-color: var(--secondary);
+      box-shadow: 0 2px 10px rgba(224, 123, 57, 0.3);
+    }
+
+    .filter-btn .filter-icon {
+      font-size: 0.95rem;
+    }
+
+    /* ---- Spots Grid ---- */
+    .spots-section {
+      padding: 64px 0 96px;
+    }
+
+    .spots-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .spot-card {
+      background: var(--bg-white);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .spot-card:hover {
+      box-shadow: var(--shadow-xl);
+      transform: translateY(-8px);
+    }
+
+    .spot-card.hidden {
+      display: none;
+    }
+
+    .spot-card__image {
+      position: relative;
+      height: 220px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .spot-card__image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .spot-card:hover .spot-card__image img {
+      transform: scale(1.08);
+    }
+
+    .spot-card__badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 100px;
+      color: #fff;
+    }
+
+    .spot-card__badge--culture { background: #7B5EA7; }
+    .spot-card__badge--beach   { background: #1E88B0; }
+    .spot-card__badge--nature  { background: #5A8F3E; }
+    .spot-card__badge--night   { background: #C1440E; }
+
+    .spot-card__content {
+      padding: 22px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .spot-card__title {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .spot-card__desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .spot-card__meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .spot-card__tag {
+      font-size: 0.73rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: var(--bg-cream);
+      padding: 3px 10px;
+      border-radius: 100px;
+    }
+
+    .spot-card__arrow {
+      margin-left: auto;
+      width: 30px;
+      height: 30px;
+      background: var(--secondary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.8rem;
+      transition: var(--transition-fast);
+      flex-shrink: 0;
+    }
+
+    .spot-card:hover .spot-card__arrow {
+      background: var(--secondary-light);
+      transform: translateX(2px);
+    }
+
+    /* ---- No Results ---- */
+    .no-results {
+      display: none;
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--text-muted);
+    }
+
+    .no-results.visible {
+      display: block;
+    }
+
+    .no-results__icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+
+    .no-results__title {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+
+    /* ---- Spots Count ---- */
+    .spots-count {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .spots-count span {
+      font-weight: 700;
+      color: var(--secondary);
+    }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 1024px) {
+      .spots-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .spots-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .spot-card__image {
+        height: 200px;
+      }
+
+      .filter-btn {
+        font-size: 0.8rem;
+        padding: 7px 14px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <!-- Navigation -->
-  <nav class="navbar">
-    <a href="index.html" class="nav-logo"><span>✦</span> 釜山Trip</a>
-    <ul class="nav-links">
-      <li><a href="index.html">首頁</a></li>
-      <li><a href="spots.html" class="active">景點</a></li>
-      <li><a href="food.html">美食</a></li>
-      <li><a href="itinerary.html">行程</a></li>
-    </ul>
-    <button class="mobile-toggle" aria-label="選單">
-      <span></span><span></span><span></span>
-    </button>
-  </nav>
 
-  <!-- Page Header -->
-  <header class="page-header">
+  <!-- ===== HEADER ===== -->
+  <header class="header" id="header">
     <div class="container">
-      <div class="breadcrumb">
-        <a href="index.html">首頁</a> / <span>景點推薦</span>
+      <div class="header__inner">
+        <a href="index.html" class="header__logo">
+          <span class="header__logo-dot"></span>
+          釜山Trip
+        </a>
+        <nav class="header__nav" id="headerNav">
+          <a href="index.html" class="nav-link">首頁</a>
+          <a href="spots.html" class="nav-link active">景點</a>
+          <a href="food.html" class="nav-link">美食</a>
+          <a href="itinerary.html" class="nav-link">行程</a>
+          <a href="#features" class="nav-cta">開始規劃</a>
+        </nav>
+        <button class="nav-toggle" id="navToggle" aria-label="選單">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </div>
-      <h1>景點探索</h1>
-      <p>秋天釜山 18 個值得走訪的地方，探索南海樂園之美</p>
     </div>
   </header>
 
-  <!-- Filter Bar -->
-  <section class="section section-light" style="padding-bottom:0;">
-    <div class="container" style="padding-top:40px;">
-      <div class="filter-bar">
-        <button class="filter-btn active" data-filter="all">全部景點</button>
-        <button class="filter-btn" data-filter="culture">文化藝術</button>
-        <button class="filter-btn" data-filter="beach">海灘海岸</button>
-        <button class="filter-btn" data-filter="nature">自然生態</button>
-        <button class="filter-btn" data-filter="landmark">地標夜景</button>
-      </div>
+  <!-- ===== PAGE HERO ===== -->
+  <section class="page-hero">
+    <div class="page-hero__bg">
+      <img src="https://raw.githubusercontent.com/luluopenclaw0110/busan-trip/main/images/hero-busan.jpg" alt="釜山全景">
+    </div>
+    <div class="page-hero__overlay"></div>
+    <div class="page-hero__content container">
+      <p class="page-hero__eyebrow">Busan Attractions</p>
+      <h1 class="page-hero__title">景點探索</h1>
+      <p class="page-hero__subtitle">秋天釜山，18 個值得走訪的地方。<br>從海岸沙灘到山城古剎，發現不一樣的釜山。</p>
     </div>
   </section>
 
-  <!-- Spots Grid -->
-  <section class="section section-light" style="padding-top:40px;">
+  <!-- ===== FILTER BAR ===== -->
+  <div class="filter-bar">
     <div class="container">
-      <div class="cards-grid">
-
-        <!-- spot_01 甘川文化村 -->
-        <div class="card fade-in" data-category="culture">
-          <div class="card-image">
-            <img src="images/spots/spot_01.jpg" alt="甘川文化村" loading="lazy">
-            <div class="card-badge">文化藝術</div>
-          </div>
-          <div class="card-content">
-            <h3>甘川文化村</h3>
-            <p>被譽為「釜山馬丘比丘」，數十棟彩色小屋依山丘階梯錯落，原本是貧民區，現蛻變成藝術文化村。穿巷走弄處處驚喜，是釜山最具代表性的文化景點。</p>
-            <div class="card-tags">
-              <span class="tag">彩繪村</span>
-              <span class="tag">藝術</span>
-              <span class="tag">階梯</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- spot_02 海雲台海水浴場 -->
-        <div class="card fade-in" data-category="beach">
-          <div class="card-image">
-            <img src="images/spots/spot_02.jpg" alt="海雲台海水浴場" loading="lazy">
-            <div class="card-badge">海灘海岸</div>
-          </div>
-          <div class="card-content">
-            <h3>海雲台海水浴場</h3>
-            <p>釜山最具代表性的海水浴場，夏天戲水人潮洶湧，秋日則多了份悠閒與浪漫。沙灘延綿數百公尺，是散步、觀夕陽的絕佳去處。</p>
-            <div class="card-tags">
-              <span class="tag">沙灘</span>
-              <span class="tag">夕陽</span>
-              <span class="tag">海水浴場</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- spot_03 廣安里海水浴場 -->
-        <div class="card fade-in" data-category="beach">
-          <div class="card-image">
-            <img src="images/spots/spot_03.jpg" alt="廣安里海水浴場" loading="lazy">
-            <div class="card-badge">海灘海岸</div>
-          </div>
-          <div class="card-content">
-            <h3>廣安里海水浴場</h3>
-            <p>以廣安里大橋夜景聞名的海水浴場，浪漫指數破表。秋夜涼爽，坐在沙灘上看大橋燈光與海面波光相映，是釜山夜晚最動人的畫面。</p>
-            <div class="card-tags">
-              <span class="tag">沙灘</span>
-              <span class="tag">夜景</span>
-              <span class="tag">廣安大橋</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- spot_04 海岸鐵道（膠囊小火車） -->
-        <div class="card fade-in" data-category="landmark">
-          <div class="card-image">
-            <img src="images/spots/spot_04.jpg" alt="海岸鐵道（膠囊小火車）" loading="lazy">
-            <div class="card-badge">特色體驗</div>
-          </div>
-          <div class="card-content">
-            <h3>海岸鐵道（膠囊小火車）</h3>
-            <p>沿海岸線行駛的可愛膠囊小火車，車體顏色鮮豔，秋季涼爽的天氣裡搭乘最舒適愜意，沿途欣賞蔚藍海岸風光，是釜山超人氣體驗。</p>
-            <div class="card-tags">
-              <span class="tag">小火車</span>
-              <span class="tag">海岸線</span>
-              <span class="tag">打卡</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- spot_05 札嘎其魚市場 -->
-        <div class="card fade-in" data-category="culture">
-          <div class="card-image">
-            <img src="images/spots/spot_05.jpg" alt="札嘎其魚市場" loading="lazy">
-            <div class="card-badge">文化藝術</div>
-          </div>
-          <div class="card-content">
-            <h3>札嘎其魚市場</h3>
-            <p>韓國最大規模的水產批發市場，擁有數十年歷史。秋天正值海鮮當令，螃蟹、鮑魚、扇貝、朱蝦應有盡有，是體驗釜山魚市場文化的必訪之地。</p>
-            <div class="card-tags">
-              <span class="tag">魚市場</span>
-              <span class="tag">海鮮</span>
-              <span class="tag">批發</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- spot_06 影島太宗台 -->
-        <div class="card fade-in" data-category="nature">
-          <div class="card-image">
-            <img src="images/spots/spot_06.jpg" alt="影島太宗台" loading="lazy">
-            <div class="card-badge">自然生態</div>
-          </div>
-          <div class="card-content">
-            <h3>影島太宗台</h3>
-            <p>位於影島南端的懸崖公園，沿海岸線分布，擁有壯闘的海蝕懸崖景觀。秋日海風清爽，站在展望台可將釜山港全景盡收眼底。</p>
-            <div class="card-tags">
-              <span class="tag">懸崖</span>
-              <span class="tag">海景</span>
-              <span class="tag">自然</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- spot_07 松島海上纜車 -->
-        <div class="card fade-in" data-category="landmark">
-          <div class="card-image">
-            <img src="images/spots/spot_07.jpg" alt="松島海上纜車" loading="lazy">
-            <div class="card-badge">地標夜景</div>
-          </div>
-          <div class="card-content">
-            <h3>松島海上纜車</h3>
-            <p>跨越松島與岩南之間的跨海纜車系統，膠囊型車廂底部為透明玻璃，可俯瞰腳下碧藍大海，刺激感與浪漫感並存，是釜山新地標。</p>
-            <div class="card-tags">
-              <span class="tag">纜車</span>
-              <span class="tag">海景</span>
-              <span class="tag">打卡</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- spot_08 金剛公園 -->
-        <div class="card fade-in" data-category="nature">
-          <div class="card-image">
-            <img src="images/spots/spot_08.jpg" alt="金剛公園" loading="lazy">
-            <div class="card-badge">自然生態</div>
-          </div>
-          <div class="card-content">
-            <h3>金剛公園</h3>
-            <p>釜山最大的都市公園，擁有金剛山佛教文化遺址。登山纜車可達山頂，俯瞰釜山港全景，秋日登高氣候宜人，是釜山人的後花園。</p>
-            <div class="card-tags">
-              <span class="tag">公園</span>
-              <span class="tag">登山</span>
-              <span class="tag">自然</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- spot_09 梵魚寺 -->
-        <div class="card fade-in" data-category="nature">
-          <div class="card-image">
-            <img src="images/spots/spot_09.jpg" alt="梵魚寺" loading="lazy">
-            <div class="card-badge">自然生態</div>
-          </div>
-          <div class="card-content">
-            <h3>梵魚寺</h3>
-            <p>釜山最著名的佛教古剎，建於新羅時期。寺廟周圍群山環繞，秋季楓紅片片，禪意與自然美景交織，吸引許多國內外旅客前來靜心參訪。</p>
-            <div class="card-tags">
-              <span class="tag">寺廟</span>
-              <span class="tag">賞楓</span>
-              <span class="tag">古剎</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- spot_10 釜山塔 -->
-        <div class="card fade-in" data-category="landmark">
-          <div class="card-image">
-            <img src="images/spots/spot_10.jpg" alt="釜山塔" loading="lazy">
-            <div class="card-badge">地標夜景</div>
-          </div>
-          <div class="card-content">
-            <h3>釜山塔</h3>
-            <p>位於龍頭山公園的釜山地標，高120公尺。塔頂360度觀景台可俯瞰釜山全景，夜晚塔身燈光變幻，是欣賞釜山日夜風光的最佳去處。</p>
-            <div class="card-tags">
-              <span class="tag">塔</span>
-              <span class="tag">夜景</span>
-              <span class="tag">地標</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- spot_12 松島海水浴場 -->
-        <div class="card fade-in" data-category="beach">
-          <div class="card-image">
-            <img src="images/spots/spot_12.jpg" alt="松島海水浴場" loading="lazy">
-            <div class="card-badge">海灘海岸</div>
-          </div>
-          <div class="card-content">
-            <h3>松島海水浴場</h3>
-            <p>距離釜山市中心最近的海水浴場之一，海水清澈、沙質細軟，搭配松島海上纜車形成的獨特畫面，是釜山代表性的海岸風景。</p>
-            <div class="card-tags">
-              <span class="tag">沙灘</span>
-              <span class="tag">海水浴場</span>
-              <span class="tag">纜車</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- spot_13 多大浦海水浴場 -->
-        <div class="card fade-in" data-category="beach">
-          <div class="card-image">
-            <img src="images/spots/spot_13.jpg" alt="多大浦海水浴場" loading="lazy">
-            <div class="card-badge">海灘海岸</div>
-          </div>
-          <div class="card-content">
-            <h3>多大浦海水浴場</h3>
-            <p>釜山最西邊的海水浴場，以夢幻日落聞名。沙灘寬廣開闘，秋日夕陽西下時分，金色夕陽與沙灘融為一體，被譽為釜山「最美日落海灘」。</p>
-            <div class="card-tags">
-              <span class="tag">沙灘</span>
-              <span class="tag">夕陽</span>
-              <span class="tag">日落</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- spot_14 金井山城 -->
-        <div class="card fade-in" data-category="nature">
-          <div class="card-image">
-            <img src="images/spots/spot_14.jpg" alt="金井山城" loading="lazy">
-            <div class="card-badge">自然生態</div>
-          </div>
-          <div class="card-content">
-            <h3>金井山城</h3>
-            <p>環繞金井山的古代城牆遺址，韓國最長的城牆之一。登上城牆可遠眺釜山全景，秋日登城健行，歷史與自然風光兼得。</p>
-            <div class="card-tags">
-              <span class="tag">城牆</span>
-              <span class="tag">歷史</span>
-              <span class="tag">健行</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- spot_15 洛東江河口生態公園 -->
-        <div class="card fade-in" data-category="nature">
-          <div class="card-image">
-            <img src="images/spots/spot_15.jpg" alt="洛東江河口生態公園" loading="lazy">
-            <div class="card-badge">自然生態</div>
-          </div>
-          <div class="card-content">
-            <h3>洛東江河口生態公園</h3>
-            <p>釜山重要的濕地生態保護區，擁有豐富的自然生態。秋日蘆葦花海一片金黃，漫步木棧道觀察水鳥，是釜山都會邊緣的生態綠洲。</p>
-            <div class="card-tags">
-              <span class="tag">濕地</span>
-              <span class="tag">生態</span>
-              <span class="tag">賞鳥</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- spot_16 龜浦山洞壁畫村 -->
-        <div class="card fade-in" data-category="culture">
-          <div class="card-image">
-            <img src="images/spots/spot_16.jpg" alt="龜浦山洞壁畫村" loading="lazy">
-            <div class="card-badge">文化藝術</div>
-          </div>
-          <div class="card-content">
-            <h3>龜浦山洞壁畫村</h3>
-            <p>以生動壁畫聞名的社區藝術村落，主題多元從海洋生態到童話故事都有。相較甘川文化村較少觀光人潮，可悠閒細細欣賞每幅作品。</p>
-            <div class="card-tags">
-              <span class="tag">壁畫</span>
-              <span class="tag">彩繪村</span>
-              <span class="tag">藝術</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- spot_17 冬柏公園 APEC世峰樓 -->
-        <div class="card fade-in" data-category="landmark">
-          <div class="card-image">
-            <img src="images/spots/spot_17.jpg" alt="冬柏公園 APEC世峰樓" loading="lazy">
-            <div class="card-badge">地標夜景</div>
-          </div>
-          <div class="card-content">
-            <h3>冬柏公園 APEC世峰樓</h3>
-            <p>2005年APEC會議舉辦地，座落於海雲台冬柏島上，融合海洋與森林的自然景觀。從公園可遠眺廣安大橋，日夜風光皆宜人。</p>
-            <div class="card-tags">
-              <span class="tag">APEC</span>
-              <span class="tag">海景</span>
-              <span class="tag">地標</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- spot_18 影島大橋 -->
-        <div class="card fade-in" data-category="landmark">
-          <div class="card-image">
-            <img src="images/spots/spot_18.jpg" alt="影島大橋" loading="lazy">
-            <div class="card-badge">地標夜景</div>
-          </div>
-          <div class="card-content">
-            <h3>影島大橋</h3>
-            <p>韓國第一座旋轉橋，每晚定時開橋表演，橋身緩緩旋轉90度讓下方船隻通過，橋上遊客可近距離觀賞這項獨特的都市景觀工程。</p>
-            <div class="card-tags">
-              <span class="tag">旋轉橋</span>
-              <span class="tag">夜景</span>
-              <span class="tag">表演</span>
-            </div>
-          </div>
-        </div>
-
+      <div class="filter-bar__inner" role="group" aria-label="景點分類篩選">
+        <button class="filter-btn active" data-filter="all">
+          <span class="filter-icon">🌐</span> 全部景點
+        </button>
+        <button class="filter-btn" data-filter="culture">
+          <span class="filter-icon">🎨</span> 文化藝術
+        </button>
+        <button class="filter-btn" data-filter="beach">
+          <span class="filter-icon">🌊</span> 海灘海岸
+        </button>
+        <button class="filter-btn" data-filter="nature">
+          <span class="filter-icon">🌿</span> 自然生態
+        </button>
+        <button class="filter-btn" data-filter="night">
+          <span class="filter-icon">🌃</span> 地標夜景
+        </button>
       </div>
+    </div>
+  </div>
+
+  <!-- ===== SPOTS GRID ===== -->
+  <section class="spots-section section--cream">
+    <div class="container">
+
+      <!-- Spots count -->
+      <div class="spots-count">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        展示 <span id="visibleCount">18</span> 個景點
+      </div>
+
+      <div class="spots-grid" id="spotsGrid">
+
+        <!-- spot_01: 甘川文化村 -->
+        <div class="spot-card fade-in" data-category="culture">
+          <div class="spot-card__image">
+            <img src="https://raw.githubusercontent.com/luluopenclaw0110/busan-trip/main/images/spots/spot_01.jpg" alt="甘川文化村" loading="lazy">
+            <span class="spot-card__badge spot-card__badge--culture">文化藝術</span>
+          </div>
+          <div class="spot-card__content">
+            <h3 class="spot-card__title">甘川文化村</h3>
+            <p class="spot-card__desc">
+              被譽為「釜山馬丘比丘」的彩色階梯村落，數十棟彩色小屋依山丘錯落，原本是貧民區，現蛻變成藝術文化村。穿巷走弄處處驚喜，胡同裡的壁畫與藝術裝置訴說著這片土地的故事。秋天漫步其間，階梯菊與芒草在微風中搖曳，處處是明信片般的風景。
+            </p>
+            <div class="spot-card__meta">
+              <span class="spot-card__tag">彩繪村</span>
+              <span class="spot-card__tag">藝術</span>
+              <span class="spot-card__tag">釜山代表</span>
+              <span class="spot-card__arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- spot_02: 海雲台海水浴場 -->
+        <div class="spot-card fade-in" data-category="beach">
+          <div class="spot-card__image">
+            <img src="https://raw.githubusercontent.com/luluopenclaw0110/busan-trip/main/images/spots/spot_02.jpg" alt="海雲台海水浴場" loading="lazy">
+            <span class="spot-card__badge spot-card__badge--beach">海灘海岸</span>
+          </div>
+          <div class="spot-card__content">
+            <h3 class="spot-card__title">海雲台海水浴場</h3>
+            <p class="spot-card__desc">
+              釜山最具代表性的海水浴場，夏天戲水人潮洶湧，秋日則多了份悠閒與浪漫。沙灘延綿數百公尺，是散步、觀夕陽的絕佳去處。秋天的海雲台少了夏日的喧囂，沙灘上只剩海浪聲與遠道而來的旅客，夕陽時分金黃光線灑落海面，美得令人窒息。
+            </p>
+            <div class="spot-card__meta">
+              <span class="spot-card__tag">沙灘</span>
+              <span class="spot-card__tag">夕陽</span>
+              <span class="spot-card__tag">海水浴場</span>
+              <span class="spot-card__arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- spot_03: 廣安里海水浴場 -->
+        <div class="spot-card fade-in" data-category="beach">
+          <div class="spot-card__image">
+            <img src="https://raw.githubusercontent.com/luluopenclaw0110/busan-trip/main/images/spots/spot_03.jpg" alt="廣安里海水浴場" loading="lazy">
+            <span class="spot-card__badge spot-card__badge--beach">海灘海岸</span>
+          </div>
+          <div class="spot-card__content">
+            <h3 class="spot-card__title">廣安里海水浴場</h3>
+            <p class="spot-card__desc">
+              以廣安里大橋夜景聞名的海水浴場，浪漫指數破表。秋夜涼爽宜人，漫步沙灘，橋上燈火與海面倒影相映成趣，是釜山賞夜景的絕佳去處。坐在沙灘上看大橋燈光與海面波光相映，是釜山夜晚最動人的畫面。
+            </p>
+            <div class="spot-card__meta">
+              <span class="spot-card__tag">沙灘</span>
+              <span class="spot-card__tag">夜景</span>
+              <span class="spot-card__tag">廣安大橋</span>
+              <span class="spot-card__arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- spot_04: 海岸鐵道（膠囊小火車） -->
+        <div class="spot-card fade-in" data-category="nature">
+          <div class="spot-card__image">
+            <img src="https://raw.githubusercontent.com/luluopenclaw0110/busan-trip/main/images/spots/spot_04.jpg" alt="海岸鐵道膠囊小火車" loading="lazy">
+            <span class="spot-card__badge spot-card__badge--nature">自然生態</span>
+          </div>
+          <div class="spot-card__content">
+            <h3 class="spot-card__title">海岸鐵道（膠囊小火車）</h3>
+            <p class="spot-card__desc">
+              沿海岸線行駛的可愛膠囊小火車，車體顏色鮮豔可愛，是釜山超人氣體驗。秋季涼爽的天氣裡搭乘最舒適愜意，海風中帶著一絲涼意，沿途蔚藍海岸風光盡收眼底，海岸線與天空連成一線，美不勝收。
+            </p>
+            <div class="spot-card__meta">
+              <span class="spot-card__tag">小火車</span>
+              <span class="spot-card__tag">海岸線</span>
+              <span class="spot-card__tag">打卡</span>
+              <span class="spot-card__arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- spot_05: 札嘎其魚市場 -->
+        <div class="spot-card fade-in" data-category="culture">
+          <div class="spot-card__image">
+            <img src="https://raw.githubusercontent.com/luluopenclaw0110/busan-trip/main/images/spots/spot_05.jpg" alt="札嘎其魚市場" loading="lazy">
+            <span class="spot-card__badge spot-card__badge--culture">文化藝術</span>
+          </div>
+          <div class="spot-card__content">
+            <h3 class="spot-card__title">札嘎其魚市場</h3>
+            <p class="spot-card__desc">
+              韓國最大規模的水產批發市場，擁有數十年歷史。秋天正值海鮮當令，螃蟹、鮑魚、扇貝、朱蝦應有盡有，是體驗釜山魚市場文化的必訪之地。現場品嚐活跳跳的海鮮，體驗釜山最道地的庶民美食文化。
+            </p>
+            <div class="spot-card__meta">
+              <span class="spot-card__tag">魚市場</span>
+              <span class="spot-card__tag">海鮮</span>
+              <span class="spot-card__tag">批發</span>
+              <span class="spot-card__arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- spot_06: 影島太宗台 -->
+        <div class="spot-card fade-in" data-category="nature">
+          <div class="spot-card__image">
+            <img src="https://raw.githubusercontent.com/luluopenclaw0110/busan-trip/main/images/spots/spot_06.jpg" alt="影島太宗台" loading="lazy">
+            <span class class="spot-card__badge spot-card__badge--nature">自然生態</span>
+          </div>
+          <div class="spot-card__content">
+            <h3 class="spot-card__title">影島太宗台</h3>
+            <p class="spot-card__desc">
+              位於影島南端的懸崖公園，沿海岸線分布，擁有壯闘的海蝕懸崖景觀。秋日海風清爽，站在展望台可將釜山港全景盡收眼底。沿著環形散步路漫步懸崖步道，海風吹拂，是釜山自然之旅的經典去處。
+            </p>
+            <div class="spot-card__meta">
+              <span class="spot-card__tag">懸崖</span>
+              <span class="spot-card__tag">海景</span>
+              <span class="spot-card__tag">自然</span>
+              <span class="spot-card__arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- spot_07: 松島海上纜車 -->
+        <div class="spot-card fade-in" data-category="night">
+          <div class="spot-card__image">
+            <img src="https://raw.githubusercontent.com/luluopenclaw0110/busan-trip/main/images/spots/spot_07.jpg" alt="松島海上纜車" loading="lazy">
+            <span class="spot-card__badge spot-card__badge--night">地標夜景</span>
+          </div>
+          <div class="spot-card__content">
+            <h3 class="spot-card__title">松島海上纜車</h3>
+            <p class="spot-card__desc">
+              韓國最長的海上纜車，跨越海域連接松島與岩南公園。膠囊型車廂底部為透明玻璃，可俯瞰腳下碧藍大海，刺激感與浪漫感並存。秋天乘坐透明水晶車廂，海風徐徐，整片釜山海岸線在腳下展開，是釜山新地標。
+            </p>
+            <div class="spot-card__meta">
+              <span class="spot-card__tag">纜車</span>
+              <span class="spot-card__tag">海景</span>
+              <span class="spot-card__tag">打卡</span>
+              <span class="spot-card__arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- spot_08: 金剛公園 -->
+        <div class="spot-card fade-in" data-category="nature">
+          <div class="spot-card__image">
+            <img src="https://raw.githubusercontent.com/luluopenclaw0110/busan-trip/main/images/spots/spot_08.jpg" alt="金剛公園" loading="lazy">
+            <span class="spot-card__badge spot-card__badge--nature">自然生態</span>
+          </div>
+          <div class="spot-card__content">
+            <h3 class="spot-card__title">金剛公園</h3>
+            <p class="spot-card__desc">
+              釜山最大的都市公園，擁有金剛山佛教文化遺址。登山纜車可達山頂，俯瞰釜山港全景，秋日登高氣候宜人，是釜山人的後花園。山頂視野開闘，可將釜山全景及海岸線盡收眼底。
+            </p>
+            <div class="spot-card__meta">
+              <span class="spot-card__tag">公園</span>
+              <span class="spot-card__tag">登山</span>
+              <span class="spot-card__tag">自然</span>
+              <span class="spot-card__arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- spot_09: 梵魚寺 -->
+        <div class="spot-card fade-in" data-category="nature">
+          <div class="spot-card__image">
+            <img src="https://raw.githubusercontent.com/luluopenclaw0110/busan-trip/main/images/spots/spot_09.jpg" alt="梵魚寺" loading="lazy">
+            <span class="spot-card__badge spot-card__badge--nature">自然生態</span>
+          </div>
+          <div class="spot-card__content">
+            <h3 class="spot-card__title">梵魚寺</h3>
+            <p class="spot-card__desc">
+              釜山最著名的佛教古剎，建於新羅時期。寺廟周圍群山環繞，秋季楓紅片片，禪意與自然美景交織，吸引許多國內外旅客前來靜心參訪。秋天滿山楓紅與古剎建築相映，是釜山最具禪意的景點。
+            </p>
+            <div class="spot-card__meta">
+              <span class="spot-card__tag">寺廟</span>
+              <span class="spot-card__tag">賞楓</span>
+              <span class="spot-card__tag">古剎</span>
+              <span class="spot-card__arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- spot_10: 釜山塔 -->
+        <div class="spot-card fade-in" data-category="night">
+          <div class="spot-card__image">
+            <img src="https://raw.githubusercontent.com/luluopenclaw0110/busan-trip/main/images/spots/spot_10.jpg" alt="釜山塔" loading="lazy">
+            <span class="spot-card__badge spot-card__badge--night">地標夜景</span>
+          </div>
+          <div class="spot-card__content">
+            <h3 class="spot-card__title">釜山塔</h3>
+            <p class="spot-card__desc">
+              位於龍頭山公園的釜山地標，高120公尺。塔頂360度觀景台可俯瞰釜山全景，夜晚塔身燈光變幻，是欣賞釜山日夜風光的最佳去處。站在觀景台，釜山繁華都會與港灣風光一覽無遺。
+            </p>
+            <div class="spot-card__meta">
+              <span class="spot-card__tag">塔</span>
+              <span class="spot-card__tag">夜景</span>
+              <span class="spot-card__tag">地標</span>
+              <span class="spot-card__arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- spot_12: 松島海水浴場 -->
+        <div class="spot-card fade-in" data-category="beach">
+          <div class="spot-card__image">
+            <img src="https://raw.githubusercontent.com/luluopenclaw0110/busan-trip/main/images/spots/spot_12.jpg" alt="松島海水浴場" loading="lazy">
+            <span class="spot-card__badge spot-card__badge--beach">海灘海岸</span>
+          </div>
+          <div class="spot-card__content">
+            <h3 class="spot-card__title">松島海水浴場</h3>
+            <p class="spot-card__desc">
+              距離釜山市中心最近的海水浴場之一，海水清澈、沙質細軟。搭配松島海上纜車形成的獨特畫面，是釜山代表性的海岸風景。秋日遊客銳減，在沙灘上悠閒散步，體驗釜山在地人最愛的海岸風情。
+            </p>
+            <div class="spot-card__meta">
+              <span class="spot-card__tag">沙灘</span>
+              <span class="spot-card__tag">海水浴場</span>
+              <span class="spot-card__tag">纜車</span>
+              <span class="spot-card__arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- spot_13: 多大浦海水浴場 -->
+        <div class="spot-card fade-in" data-category="beach">
+          <div class="spot-card__image">
+            <img src="https://raw.githubusercontent.com/luluopenclaw0110/busan-trip/main/images/spots/spot_13.jpg" alt="多大浦海水浴場" loading="lazy">
+            <span class="spot-card__badge spot-card__badge--beach">海灘海岸</span>
+          </div>
+          <div class="spot-card__content">
+            <h3 class="spot-card__title">多大浦海水浴場</h3>
+            <p class="spot-card__desc">
+              釜山最西邊的海水浴場，以夢幻日落聞名。沙灘寬廣開闘，秋日夕陽西下時分，金色夕陽與沙灘融為一體，被譽為釜山「最美日落海灘」。多蒲大橋的夕陽倒影，更是攝影愛好者的最愛。
+            </p>
+            <div class="spot-card__meta">
+              <span class="spot-card__tag">沙灘</span>
+              <span class="spot-card__tag">夕陽</span>
+              <span class="spot-card__tag">日落</span>
+              <span class="spot-card__arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- spot_14: 金井山城 -->
+        <div class="spot-card fade-in" data-category="nature">
+          <div class="spot-card__image">
+            <img src="https://raw.githubusercontent.com/luluopenclaw0110/busan-trip/main/images/spots/spot_14.jpg" alt="金井山城" loading="lazy">
+            <span class="spot-card__badge spot-card__badge--nature">自然生態</span>
+          </div>
+          <div class="spot-card__content">
+            <h3 class="spot-card__title">金井山城</h3>
+            <p class="spot-card__desc">
+              環繞金井山的古代城牆遺址，韓國最長的城牆之一。登上城牆可遠眺釜山全景，秋日登城健行，歷史與自然風光兼得。城牆沿山脊線蜿蜒，全長超過4公里，健走起來相當有成就感。
+            </p>
+            <div class="spot-card__meta">
+              <span class="spot-card__tag">城牆</span>
+              <span class="spot-card__tag">歷史</span>
+              <span class="spot-card__tag">健行</span>
+              <span class="spot-card__arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- spot_15: 洛東江河口生態公園 -->
+        <div class="spot-card fade-in" data-category="nature">
+          <div class="spot-card__image">
+            <img src="https://raw.githubusercontent.com/luluopenclaw0110/busan-trip/main/images/spots/spot_15.jpg" alt="洛東江河口生態公園" loading="lazy">
+            <span class="spot-card__badge spot-card__badge--nature">自然生態</span>
+          </div>
+          <div class="spot-card__content">
+            <h3 class="spot-card__title">洛東江河口生態公園</h3>
+            <p class="spot-card__desc">
+              釜山重要的濕地生態保護區，擁有豐富的自然生態。秋日蘆葦花海一片金黃，漫步木棧道觀察水鳥，是釜山都會邊緣的生態綠洲。賞鳥愛好者可在觀鳥亭觀察各种水鳥的棲息姿態。
+            </p>
+            <div class="spot-card__meta">
+              <span class="spot-card__tag">濕地</span>
+              <span class="spot-card__tag">生態</span>
+              <span class="spot-card__tag">賞鳥</span>
+              <span class="spot-card__arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- spot_16: 龜浦山洞壁畫村 -->
+        <div class="spot-card fade-in" data-category="culture">
+          <div class="spot-card__image">
+            <img src="https://raw.githubusercontent.com/luluopenclaw0110/busan-trip/main/images/spots/spot_16.jpg" alt="龜浦山洞壁畫村" loading="lazy">
+            <span class="spot-card__badge spot-card__badge--culture">文化藝術</span>
+          </div>
+          <div class="spot-card__content">
+            <h3 class="spot-card__title">龜浦山洞壁畫村</h3>
+            <p class="spot-card__desc">
+              以生動壁畫聞名的社區藝術村落，主題多元從海洋生態到童話故事都有。相較甘川文化村較少觀光人潮，可悠閒細細欣賞每幅作品。漫步其間，處處是驚喜，是釜山隱藏版的彩繪藝術村。
+            </p>
+            <div class="spot-card__meta">
+              <span class="spot-card__tag">壁畫</span>
+              <span class="spot-card__tag">彩繪村</span>
+              <span class="spot-card__tag">藝術</span>
+              <span class="spot-card__arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- spot_17: 冬柏公園 APEC世峰樓 -->
+        <div class="spot-card fade-in" data-category="night">
+          <div class="spot-card__image">
+            <img src="https://raw.githubusercontent.com/luluopenclaw0110/busan-trip/main/images/spots/spot_17.jpg" alt="冬柏公園 APEC世峰樓" loading="lazy">
+            <span class="spot-card__badge spot-card__badge--night">地標夜景</span>
+          </div>
+          <div class="spot-card__content">
+            <h3 class="spot-card__title">冬柏公園 APEC世峰樓</h3>
+            <p class="spot-card__desc">
+              2005年APEC會議舉辦地，座落於海雲台冬柏島上，融合海洋與森林的自然景觀。從公園可遠眺廣安大橋，日夜風光皆宜人。秋夜涼爽，在海風吹拂下遠眺大橋夜景，是釜山最具國際風範的景點。
+            </p>
+            <div class="spot-card__meta">
+              <span class="spot-card__tag">APEC</span>
+              <span class="spot-card__tag">海景</span>
+              <span class="spot-card__tag">地標</span>
+              <span class="spot-card__arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- spot_18: 影島大橋 -->
+        <div class="spot-card fade-in" data-category="night">
+          <div class="spot-card__image">
+            <img src="https://raw.githubusercontent.com/luluopenclaw0110/busan-trip/main/images/spots/spot_18.jpg" alt="影島大橋" loading="lazy">
+            <span class="spot-card__badge spot-card__badge--night">地標夜景</span>
+          </div>
+          <div class="spot-card__content">
+            <h3 class="spot-card__title">影島大橋</h3>
+            <p class="spot-card__desc">
+              韓國第一座旋轉橋，每晚定時開橋表演，橋身緩緩旋轉90度讓下方船隻通過，橋上遊客可近距離觀賞這項獨特的都市景觀工程。觀賞橋身華麗旋轉的瞬間，是釜山夜晚最特别的體驗。
+            </p>
+            <div class="spot-card__meta">
+              <span class="spot-card__tag">旋轉橋</span>
+              <span class="spot-card__tag">夜景</span>
+              <span class="spot-card__tag">表演</span>
+              <span class="spot-card__arrow">→</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /spots-grid -->
+
+      <!-- No results message -->
+      <div class="no-results" id="noResults">
+        <div class="no-results__icon">🔍</div>
+        <h3 class="no-results__title">找不到符合的景點</h3>
+        <p>請嘗試其他分類篩選</p>
+      </div>
+
     </div>
   </section>
 
-  <!-- Footer -->
+  <!-- ===== FOOTER ===== -->
   <footer class="footer">
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <h3><em>✦</em> 釜山Trip</h3>
-        <p>秋日釜山深度旅遊指南，精選18個景點、10大道地美食，帶你用三天兩夜發現不一樣的南海樂園。</p>
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <div class="footer__brand-name">
+            <span class="dot"></span>
+            釜山Trip
+          </div>
+          <p class="footer__brand-desc">
+            秋天釜山，暖色調的海洋與城市。<br>
+            為你整理釜山最在地的景點、美食與行程推薦，<br>
+            陪你用自己的節奏，探索這座美麗的港都。
+          </p>
+        </div>
+        <div>
+          <div class="footer__col-title">快速連結</div>
+          <div class="footer__links">
+            <a href="index.html">首頁</a>
+            <a href="spots.html">景點</a>
+            <a href="food.html">美食</a>
+            <a href="itinerary.html">行程</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer__col-title">關於</div>
+          <div class="footer__links">
+            <a href="#">關於本站</a>
+            <a href="#">聯絡我們</a>
+            <a href="#">隱私政策</a>
+          </div>
+        </div>
       </div>
-      <div class="footer-links">
-        <h4>快速連結</h4>
-        <ul>
-          <li><a href="index.html">首頁</a></li>
-          <li><a href="spots.html">景點推薦</a></li>
-          <li><a href="food.html">美食地圖</a></li>
-          <li><a href="itinerary.html">行程規劃</a></li>
-        </ul>
+      <div class="footer__bottom">
+        <span>© 2026 釜山Trip — 秋日釜山・南海樂園</span>
+        <span>圖片來源：<a href="https://github.com/luluopenclaw0110/busan-trip" target="_blank">busan-trip</a></span>
       </div>
-      <div class="footer-links">
-        <h4>釜山資訊</h4>
-        <ul>
-          <li><a href="https://www.bisco.or.kr" target="_blank">韓國旅遊發展局</a></li>
-          <li><a href="https://www.busan.go.kr" target="_blank">釜山市官方網站</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2024 釜山Trip｜南海樂園・秋天限定｜Designed by Web Designer Agent</p>
     </div>
   </footer>
 
-  <script src="js/main.js"></script>
+  <script>
+    // ---- Filter functionality ----
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const spotCards = document.querySelectorAll('.spot-card');
+    const visibleCount = document.getElementById('visibleCount');
+    const noResults = document.getElementById('noResults');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Update active button
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filter = btn.dataset.filter;
+        let count = 0;
+
+        spotCards.forEach(card => {
+          const category = card.dataset.category;
+          if (filter === 'all' || category === filter) {
+            card.classList.remove('hidden');
+            count++;
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+
+        visibleCount.textContent = count;
+        noResults.classList.toggle('visible', count === 0);
+      });
+    });
+
+    // ---- Scroll fade-in animation ----
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // ---- Header scroll effect ----
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // ---- Mobile nav toggle ----
+    const navToggle = document.getElementById('navToggle');
+    const headerNav = document.getElementById('headerNav');
+    if (navToggle && headerNav) {
+      navToggle.addEventListener('click', () => {
+        navToggle.classList.toggle('active');
+        headerNav.classList.toggle('open');
+      });
+    }
+  </script>
+
 </body>
 </html>
